@@ -876,7 +876,7 @@ function calculate() {
       amount: -srAnnualGross,
       type: "subtract",
       narrate: (divisor, freqWord) => {
-        let s = "Calculated using the DCF daily rate for a " + age + "-year-old (" + fmt(dailyRate) + " per day), multiplied by 17 and by 12 months, for an annual subsidy of " + fmt(dailyRate * 17 * 12) + ".";
+        let s = "Calculated using the DCF daily rate for a " + age + "-year-old (" + fmt(dailyRate) + " per day), multiplied by 17 (the average school days per month during the school year) and by 12 months, for an annual subsidy of " + fmt(dailyRate * 17 * 12) + ".";
         if (stacked) {
           s += " Because the student is also enrolled in VPK, only 8/11 of that subsidy applies to the hours VPK does not cover, bringing the annual scholarship to " + fmt(srAnnualGross) + ".";
         }
@@ -893,7 +893,7 @@ function calculate() {
         amount: copayAnnual,
         type: "add",
         narrate: (divisor, freqWord) =>
-          "Per the Parent Payment Certificate, the family's daily co-pay of " + fmt(copay) + " is multiplied by 17 and by 12 months, for an annual out-of-pocket amount of " + fmt(copayAnnual) + ". That amount is divided across " + divisor + " " + freqWord + " payments and added to the balance each period, since the School Readiness scholarship above is shown at its full, gross value."
+          "Per the Parent Payment Certificate, the family's daily co-pay of " + fmt(copay) + " is multiplied by 17 (the average school days per month during the school year) and by 12 months, for an annual out-of-pocket amount of " + fmt(copayAnnual) + ". That amount is divided across " + divisor + " " + freqWord + " payments and added to the balance each period, since the School Readiness scholarship above is shown at its full, gross value."
       });
     }
   } else if (srEligible && schoolAge) {
