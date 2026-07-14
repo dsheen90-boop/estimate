@@ -269,6 +269,69 @@ select:focus, input:focus {
 
 #results { display: none; }
 
+/* ---------- Print statement (hidden on screen, shown only via window.print) ---------- */
+#printStatement { display: none; }
+#printStatement .letterhead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+#printStatement .letterhead img { height: 56px; width: auto; }
+#printStatement .print-doc-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-h4);
+  color: var(--fg-brand);
+  margin: 0;
+}
+#printStatement .print-meta {
+  font-size: 12px;
+  color: var(--fg-3);
+  margin-top: 2px;
+}
+#printStatement h2.print-section {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-h5);
+  color: var(--fg-brand);
+  border-bottom: 1px solid var(--border-1);
+  padding-bottom: 6px;
+  margin: var(--space-6) 0 var(--space-4);
+}
+.print-dl {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  row-gap: 8px;
+  column-gap: 12px;
+  font-size: 13px;
+  margin-bottom: var(--space-4);
+}
+.print-dl dt { font-weight: 700; color: var(--fg-2); margin: 0; }
+.print-dl dd { margin: 0; color: var(--fg-1); }
+.print-narrative {
+  font-size: 10.5px;
+  color: var(--fg-3);
+  font-style: italic;
+  line-height: 1.4;
+  margin: 2px 0 0;
+}
+.print-line-label { font-weight: 600; }
+
+@media print {
+  body * { visibility: hidden; }
+  #printStatement, #printStatement * { visibility: visible; }
+  #printStatement {
+    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 0.4in;
+  }
+  .progress-dock, .wizard-nav { display: none !important; }
+}
+
 /* ---------- Statement-style frequency toggle (top of results) ---------- */
 .freq-toggle { display: flex; gap: 10px; margin-bottom: var(--space-2); }
 .freq-btn {
@@ -586,6 +649,7 @@ table.line-items tr.total td.amt { font-family: var(--font-display); font-size: 
 
     <div class="wizard-nav">
       <button class="btn btn-outline" id="startOverBtn">Start Over</button>
+      <button class="btn btn-primary" id="printBtn">Print Statement</button>
     </div>
   </div>
 
@@ -593,6 +657,9 @@ table.line-items tr.total td.amt { font-family: var(--font-display); font-size: 
     This calculator provides an estimate only, based on the information entered. Final tuition and scholarship amounts are determined by the Business Office and applicable state agencies.
   </div>
 </div>
+
+<!-- ===================== PRINT STATEMENT (print-only) ===================== -->
+<div id="printStatement"></div>
 
 <!-- ===================== PROGRESS DOCK ===================== -->
 <div class="progress-dock" id="progressDock">
@@ -1068,6 +1135,150 @@ function renderStatement(calc) {
   }
   document.getElementById("grandTotalNote").textContent = noteText;
 }
+
+// ---------- Print statement ----------
+function buildPrintStatement(calc) {
+  if (!calc) return;
+
+  const divisor = getDivisor(calc.schoolAge, activeFreq);
+  const freqWord = activeFreq === "monthly" ? "monthly" : "bimonthly";
+  const freqWordCap = activeFreq === "monthly" ? "Monthly" : "Bimonthly";
+  const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  const logoSrc = document.getElementById("logoImg").src;
+
+  // ---- Gathered form field values ----
+  const dobDisplay = dobInput.value
+    ? new Date(dobInput.value + "T00:00:00").toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+    : "—";
+  const ageDisplay = currentAge !== null ? (currentAge + " (" + (calc.schoolAge ? "School-Age" : "Preschool") + ")") : "—";
+
+  const vpkAsked = currentAge === 4;
+  const vpkHasCertPrint = vpkAsked && getRadioValue("vpkGroup") === "yes";
+  const vpkDisplay = vpkAsked ? (vpkHasCertPrint ? "Yes — certificate uploaded" : "No") : "Not applicable (student is not age 4)";
+
+  const srEligiblePrint = getRadioValue("srGroup") === "yes";
+  const srDisplay = srEligiblePrint ? "Yes" : "No";
+  const copayVal = parseFloat(document.getElementById("copayInput").value) || 0;
+  const copayDisplay = (srEligiblePrint && !calc.schoolAge) ? (fmt(copayVal) + " per day") : "Not applicable";
+
+  const sufsEligiblePrint = getRadioValue("sufsGroup") === "yes";
+  const sufsDisplay = sufsEligiblePrint ? "Yes" : "No";
+  let sufsDetailDisplay = "Not applicable";
+  if (sufsEligiblePrint) {
+    const sufsTypePrint = calc.schoolAge ? getRadioValue("sufsTypeGroup") : "ua";
+    if (sufsTypePrint === "ftc") {
+      const countySelect = document.getElementById("ftcCounty");
+      sufsDetailDisplay = "FTC/EO — " + countySelect.options[countySelect.selectedIndex].text;
+    } else {
+      const uaVal = parseFloat(document.getElementById("uaAmount").value) || 0;
+      sufsDetailDisplay = "UA — Award amount " + fmt(uaVal);
+    }
+  }
+
+  const lunchDisplay = calc.lunchSelected ? "Selected ($76.50/month)" : "Not selected";
+  const afterschoolDisplay = calc.schoolAge
+    ? (calc.afterschoolSelected ? "Selected ($225.00/month)" : "Not selected")
+    : "Not applicable (Preschool)";
+
+  // ---- Line items ----
+  let lineRowsHtml = "";
+  calc.lineItemsAnnual.forEach(item => {
+    let sign = "";
+    if (item.type === "subtract") sign = "-";
+    if (item.type === "add") sign = "+";
+    const perPeriod = Math.abs(item.amount) / divisor;
+    const narrative = item.narrate ? item.narrate(divisor, freqWord) : "";
+    const boldRow = item.type === "total";
+    lineRowsHtml += "<tr" + (boldRow ? ' style="font-weight:700; border-top:2px solid var(--bpi-bistre);"' : "") + ">" +
+      '<td style="padding:8px 4px; border-bottom:1px solid var(--border-1); vertical-align:top;">' +
+        '<div class="print-line-label">' + item.label + "</div>" +
+        (narrative ? '<div class="print-narrative">' + narrative + "</div>" : "") +
+      "</td>" +
+      '<td style="padding:8px 4px; border-bottom:1px solid var(--border-1); text-align:right; vertical-align:top; white-space:nowrap;">' + sign + fmt(perPeriod) + "</td>" +
+    "</tr>";
+  });
+
+  const tuitionPayment = calc.remainingAnnual / divisor;
+  let addonTotal = 0;
+  let addonRowsHtml = "";
+
+  if (calc.lunchSelected) {
+    addonRowsHtml += "<tr>" +
+      '<td style="padding:8px 4px; border-bottom:1px dashed var(--border-1);">Lunch Program' + (activeFreq === "bimonthly" ? " (billed monthly only)" : "") +
+        '<div class="print-narrative">$4.50 per school day, billed as a flat monthly charge. Cannot be split into bimonthly payments.</div></td>' +
+      '<td style="padding:8px 4px; border-bottom:1px dashed var(--border-1); text-align:right; white-space:nowrap;">' + fmt(LUNCH_MONTHLY) + "</td>" +
+    "</tr>";
+    if (activeFreq === "monthly") addonTotal += LUNCH_MONTHLY;
+  }
+
+  if (calc.afterschoolSelected) {
+    const afterschoolDivisor = activeFreq === "monthly" ? 1 : 2;
+    const perPeriod = AFTERSCHOOL_MONTHLY / afterschoolDivisor;
+    addonRowsHtml += "<tr>" +
+      '<td style="padding:8px 4px; border-bottom:1px dashed var(--border-1);">Afterschool Program Charge' +
+        '<div class="print-narrative">$225.00 flat monthly rate' + (afterschoolDivisor > 1 ? ", split evenly into bimonthly payments." : ".") + '</div></td>' +
+      '<td style="padding:8px 4px; border-bottom:1px dashed var(--border-1); text-align:right; white-space:nowrap;">' + fmt(perPeriod) + "</td>" +
+    "</tr>";
+    addonTotal += perPeriod;
+
+    if (calc.schoolAgeAfterschoolFullyCovered) {
+      addonRowsHtml += "<tr>" +
+        '<td style="padding:8px 4px; border-bottom:1px dashed var(--border-1); color:var(--intent-success);">School Readiness Afterschool Credit' +
+          '<div class="print-narrative">Full Afterschool Program cost is covered because the student is School Readiness eligible.</div></td>' +
+        '<td style="padding:8px 4px; border-bottom:1px dashed var(--border-1); text-align:right; white-space:nowrap; color:var(--intent-success);">-' + fmt(perPeriod) + "</td>" +
+      "</tr>";
+      addonTotal -= perPeriod;
+    }
+  }
+
+  const grandTotal = tuitionPayment + addonTotal;
+
+  document.getElementById("printStatement").innerHTML =
+    '<div class="letterhead">' +
+      '<img src="' + logoSrc + '" alt="Brownsville Preparatory Institute">' +
+      "<div>" +
+        '<div class="bpi-eyebrow">Brownsville Preparatory Institute</div>' +
+        '<h1 class="print-doc-title">Tuition Estimate Statement</h1>' +
+        '<div class="rule-gold"></div>' +
+        '<div class="print-meta">Generated ' + today + " · " + freqWordCap + " payment plan (" + divisor + " payments/year)</div>" +
+      "</div>" +
+    "</div>" +
+
+    '<h2 class="print-section">Student &amp; Scholarship Information</h2>' +
+    '<dl class="print-dl">' +
+      "<dt>Date of Birth</dt><dd>" + dobDisplay + "</dd>" +
+      "<dt>Age as of September 1, 2026</dt><dd>" + ageDisplay + "</dd>" +
+      "<dt>VPK Certificate Uploaded</dt><dd>" + vpkDisplay + "</dd>" +
+      "<dt>School Readiness Eligible</dt><dd>" + srDisplay + "</dd>" +
+      "<dt>School Readiness Co-Payment</dt><dd>" + copayDisplay + "</dd>" +
+      "<dt>Step Up For Students Eligible</dt><dd>" + sufsDisplay + "</dd>" +
+      "<dt>Step Up For Students Detail</dt><dd>" + sufsDetailDisplay + "</dd>" +
+      "<dt>Lunch Program</dt><dd>" + lunchDisplay + "</dd>" +
+      "<dt>Afterschool Program</dt><dd>" + afterschoolDisplay + "</dd>" +
+      "<dt>Payment Frequency</dt><dd>" + freqWordCap + " (" + divisor + " payments/year)</dd>" +
+    "</dl>" +
+
+    '<h2 class="print-section">Tuition Statement — Amount Due Each ' + (activeFreq === "monthly" ? "Month" : "Payment Period") + '</h2>' +
+    '<table style="width:100%; border-collapse:collapse; font-size:12px;">' +
+      "<thead><tr>" +
+        '<th style="text-align:left; padding:6px 4px; border-bottom:1px solid var(--border-1); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:var(--fg-3);">Line Item</th>' +
+        '<th style="text-align:right; padding:6px 4px; border-bottom:1px solid var(--border-1); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:var(--fg-3);">This Payment</th>' +
+      "</tr></thead>" +
+      "<tbody>" + lineRowsHtml + addonRowsHtml + "</tbody>" +
+    "</table>" +
+
+    '<div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:16px; padding-top:10px; border-top:2px solid var(--bpi-bistre); font-family:var(--font-display); font-weight:700; font-size:16px; color:var(--fg-brand);">' +
+      "<span>Total Due This " + (activeFreq === "monthly" ? "Month" : "Payment Period") + "</span>" +
+      "<span>" + fmt(grandTotal) + "</span>" +
+    "</div>" +
+
+    '<div class="footer-disclaimer" style="margin-top:32px; text-align:left;">This calculator provides an estimate only, based on the information entered above. Final tuition and scholarship amounts are determined by the Business Office and applicable state agencies.</div>';
+}
+
+document.getElementById("printBtn").addEventListener("click", () => {
+  buildPrintStatement(lastCalc);
+  window.print();
+});
 </script>
 </body>
 </html>
