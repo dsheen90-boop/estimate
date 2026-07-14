@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tuition Estimate Calculator — Brownsville Preparatory Institute</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caudex:ital,wght@0,400;0,700;1,400;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bpi-bistre:        #3F2B1D;
+  --bpi-brown-sugar:   #A5704C;
+  --bpi-harvest-gold:  #E09900;
+  --bpi-caramel:       #FFD997;
+
+  --bpi-bistre-90:     #523b2b;
+  --bpi-bistre-80:     #6a523e;
+  --bpi-bistre-20:     #d9cec5;
+  --bpi-bistre-10:     #ece5de;
+  --bpi-bistre-05:     #f7f3ef;
+
+  --bpi-brown-sugar-90: #b1815f;
+  --bpi-brown-sugar-20: #ead8ca;
+  --bpi-brown-sugar-10: #f4e9df;
+
+  --bpi-gold-90:       #f5a80d;
+  --bpi-gold-20:       #f7d99a;
+  --bpi-gold-10:       #fbeccb;
+
+  --bpi-caramel-50:    #ffecc8;
+  --bpi-caramel-20:    #fff6e4;
+
+  --bpi-cream:         #FAF6F0;
+  --bpi-ivory:         #F2ECE1;
+  --bpi-paper:         #FFFFFF;
+  --bpi-ink:           #221509;
+  --bpi-ink-2:         #5a4838;
+  --bpi-ink-3:         #8a7565;
+  --bpi-rule:          #e3d8ca;
+  --bpi-rule-strong:   #c6b49e;
+
+  --fg-1: var(--bpi-ink);
+  --fg-2: var(--bpi-ink-2);
+  --fg-3: var(--bpi-ink-3);
+  --fg-inverse: #FFFFFF;
+  --fg-brand: var(--bpi-bistre);
+  --fg-accent: var(--bpi-harvest-gold);
+
+  --bg-1: var(--bpi-cream);
+  --bg-2: var(--bpi-paper);
+  --bg-3: var(--bpi-ivory);
+  --bg-brand: var(--bpi-bistre);
+  --bg-brand-soft: var(--bpi-caramel);
+
+  --border-1: var(--bpi-rule);
+  --border-2: var(--bpi-rule-strong);
+  --border-brand: var(--bpi-bistre);
+
+  --intent-success: #3f7a3a;
+  --intent-warning: #c47a1b;
+  --intent-danger:  #a8392b;
+  --intent-info:    #3a6a86;
+
+  --font-display: "Caudex", "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-body:    "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --fs-eyebrow:   0.75rem;
+  --fs-caption:   0.8125rem;
+  --fs-body-sm:   0.875rem;
+  --fs-body:      1rem;
+  --fs-body-lg:   1.125rem;
+  --fs-h5:        1.25rem;
+  --fs-h4:        1.5rem;
+  --fs-h3:        2rem;
+  --fs-h2:        2.25rem;
+
+  --lh-tight:     1.1;
+  --lh-snug:      1.25;
+  --lh-normal:    1.5;
+  --lh-relaxed:   1.65;
+
+  --tracking-caps: 0.14em;
+
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-pill: 999px;
+
+  --shadow-xs: 0 1px 0 rgba(63, 43, 29, 0.06);
+  --shadow-sm: 0 1px 2px rgba(63, 43, 29, 0.08), 0 1px 1px rgba(63, 43, 29, 0.04);
+  --shadow-md: 0 4px 10px rgba(63, 43, 29, 0.10), 0 2px 4px rgba(63, 43, 29, 0.06);
+  --shadow-lg: 0 10px 28px rgba(63, 43, 29, 0.14), 0 4px 8px rgba(63, 43, 29, 0.06);
+
+  --ease-standard: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --dur-fast:   120ms;
+  --dur-base:   200ms;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  color: var(--fg-1);
+  background: var(--bg-1);
+  -webkit-font-smoothing: antialiased;
+}
+body { padding: var(--space-8) var(--space-4) 120px; }
+.wrap { max-width: 760px; margin: 0 auto; }
+
+header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+header img.logo { height: 64px; width: auto; }
+header .heading-block { position: relative; padding-bottom: 10px; }
+.bpi-eyebrow {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--fg-accent);
+  margin: 0 0 4px;
+}
+h1.title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-h3);
+  line-height: var(--lh-tight);
+  color: var(--fg-brand);
+  margin: 0;
+}
+.rule-gold { height: 3px; width: 56px; background: var(--bpi-harvest-gold); margin-top: 8px; }
+
+.card {
+  background: var(--bg-2);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  margin-bottom: var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+.card h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-h5);
+  color: var(--fg-brand);
+  margin: 0 0 var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-1);
+}
+
+.field { margin-bottom: var(--space-4); }
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--fg-1);
+  margin-bottom: 6px;
+}
+select, input[type="number"], input[type="text"], input[type="date"] {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--fg-1);
+  background: var(--bg-2);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color var(--dur-base), box-shadow var(--dur-base);
+}
+select:focus, input:focus {
+  border-color: var(--bpi-harvest-gold);
+  box-shadow: 0 0 0 3px rgba(224,153,0,0.25);
+}
+.computed-age {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg-brand);
+  margin-top: 6px;
+  min-height: 18px;
+}
+.field-error {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--intent-danger);
+  margin-top: 6px;
+  min-height: 16px;
+}
+
+.radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+.radio-btn {
+  flex: 1;
+  min-width: 130px;
+  text-align: center;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--fg-2);
+  background: var(--bg-2);
+  user-select: none;
+  transition: all var(--dur-base) var(--ease-standard);
+}
+.radio-btn:hover { background: var(--bpi-bistre-05); }
+.radio-btn.active {
+  border-color: var(--bpi-bistre);
+  background: var(--bpi-bistre);
+  color: #fff;
+}
+
+.hidden { display: none !important; }
+
+.warning {
+  background: var(--bpi-gold-10);
+  border: 1px solid var(--bpi-gold-20);
+  color: var(--intent-warning);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.followup { margin-top: var(--space-5); padding-top: var(--space-5); border-top: 1px dashed var(--border-1); }
+
+.checkbox-row { display: flex; align-items: center; gap: 8px; margin-bottom: var(--space-2); }
+.checkbox-row input { width: 18px; height: 18px; accent-color: var(--bpi-bistre); }
+.checkbox-row label { font-weight: 600; font-size: 14px; margin: 0; }
+
+.btn {
+  padding: 13px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--dur-base) var(--ease-standard);
+}
+.btn-primary { background: var(--bpi-bistre); color: #fff; box-shadow: var(--shadow-sm); }
+.btn-primary:hover { background: #2d1d12; box-shadow: var(--shadow-md); }
+.btn-primary:active { transform: scale(0.99); box-shadow: var(--shadow-xs); }
+.btn-outline { background: transparent; color: var(--bpi-bistre); border: 1.5px solid var(--bpi-bistre); }
+.btn-outline:hover { background: var(--bpi-bistre); color: #fff; }
+.btn-ghost { background: transparent; color: var(--fg-2); padding: 13px 14px; }
+.btn-ghost:hover { background: var(--bpi-bistre-05); color: var(--fg-1); }
+
+.wizard-nav { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-6); gap: var(--space-3); }
+.wizard-nav .spacer { flex: 1; }
+
+#results { display: none; }
+
+/* ---------- Statement-style frequency toggle (top of results) ---------- */
+.freq-toggle { display: flex; gap: 10px; margin-bottom: var(--space-2); }
+.freq-btn {
+  flex: 1;
+  text-align: center;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--fg-2);
+  background: var(--bg-2);
+  user-select: none;
+  transition: all var(--dur-base) var(--ease-standard);
+}
+.freq-btn:hover { background: var(--bpi-bistre-05); }
+.freq-btn.active {
+  border-color: var(--bpi-bistre);
+  border-width: 2px;
+  background: var(--bpi-caramel-20);
+  color: var(--fg-brand);
+}
+.period-note {
+  text-align: center;
+  font-size: 12px;
+  color: var(--fg-3);
+  margin-bottom: var(--space-5);
+}
+
+table.line-items { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.line-items th { text-align: left; padding: 8px 4px; border-bottom: 1px solid var(--border-1); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-3); }
+table.line-items th.amt, table.line-items td.amt { text-align: right; font-variant-numeric: tabular-nums; }
+table.line-items td { padding: 11px 4px; border-bottom: 1px solid var(--border-1); vertical-align: middle; }
+table.line-items tr.subtract td.amt { color: var(--intent-success); }
+table.line-items tr.add td.amt { color: var(--intent-danger); }
+table.line-items tr.total td { font-weight: 700; border-top: 2px solid var(--bpi-bistre); border-bottom: none; padding-top: 14px; }
+table.line-items tr.total td.amt { font-family: var(--font-display); font-size: 17px; color: var(--fg-brand); }
+
+.tt { position: relative; cursor: help; border-bottom: 1px dotted var(--bpi-ink-3); }
+.tt::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 0; bottom: 130%;
+  background: var(--bpi-bistre);
+  color: #fff;
+  padding: 11px 13px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.55;
+  width: 300px;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity var(--dur-base) var(--ease-standard), transform var(--dur-base) var(--ease-standard);
+  pointer-events: none;
+  z-index: 30;
+}
+.tt:hover::after, .tt:focus::after { opacity: 1; transform: translateY(0); }
+
+.addon-line { display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 9px 0; border-bottom: 1px dashed var(--border-1); }
+.addon-line.credit .amt { color: var(--intent-success); }
+.addon-line .amt { font-weight: 700; }
+.grand-total {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 2px solid var(--bpi-bistre);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--fg-brand);
+}
+.note { font-size: 12px; color: var(--fg-3); margin-top: 8px; line-height: 1.5; }
+.footer-disclaimer { font-size: 12px; color: var(--fg-3); text-align: center; margin-top: var(--space-8); line-height: 1.6; }
+
+/* ---------- Progress dock (fixed bottom) ---------- */
+.progress-dock {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: var(--bg-2);
+  border-top: 1px solid var(--border-1);
+  padding: 10px 16px 16px;
+  box-shadow: 0 -2px 10px rgba(63, 43, 29, 0.08);
+  z-index: 50;
+}
+.progress-dock-inner { max-width: 760px; margin: 0 auto; }
+.progress-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--fg-2);
+  margin-bottom: 7px;
+  text-align: center;
+}
+.progress-track {
+  height: 6px;
+  background: var(--bpi-bistre-10);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--bpi-harvest-gold);
+  border-radius: var(--radius-pill);
+  transition: width var(--dur-base) var(--ease-standard);
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img id="logoImg" class="logo" src="data:image/png;base64,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" alt="Brownsville Preparatory Institute">
+    <div class="heading-block">
+      <div class="bpi-eyebrow">Brownsville Preparatory Institute</div>
+      <h1 class="title">Tuition Estimate Calculator</h1>
+      <div class="rule-gold"></div>
+    </div>
+  </header>
+
+  <!-- ===================== WIZARD ===================== -->
+  <div class="card" id="wizardCard">
+
+    <!-- Step: dob -->
+    <div class="step-panel" data-step="dob">
+      <h2>Student Information</h2>
+      <div class="field">
+        <label for="dobInput">Student's date of birth</label>
+        <input type="date" id="dobInput">
+        <div class="computed-age" id="computedAgeText"></div>
+        <div class="field-error" id="dobError"></div>
+      </div>
+    </div>
+
+    <!-- Step: vpk -->
+    <div class="step-panel hidden" data-step="vpk">
+      <h2>VPK Certificate</h2>
+      <div class="field">
+        <label>Does the student have a VPK certificate uploaded to the school?</label>
+        <div class="radio-group" id="vpkGroup">
+          <div class="radio-btn" data-value="yes">Yes, uploaded</div>
+          <div class="radio-btn" data-value="no">No / Not yet</div>
+        </div>
+        <div id="vpkWarning" class="warning hidden">No VPK scholarship has been applied. Please upload the VPK certificate to the school for an accurate estimate.</div>
+      </div>
+    </div>
+
+    <!-- Step: sr (eligibility + co-payment together) -->
+    <div class="step-panel hidden" data-step="sr">
+      <h2>School Readiness (SR)</h2>
+      <div class="field">
+        <label>Is the student eligible for School Readiness?</label>
+        <div class="radio-group" id="srGroup">
+          <div class="radio-btn" data-value="yes">Yes</div>
+          <div class="radio-btn" data-value="no">No</div>
+        </div>
+      </div>
+      <div id="srCopayWrap" class="followup hidden">
+        <div class="field">
+          <label for="copayInput">Parent co-payment (from Parent Payment Certificate)</label>
+          <input type="number" id="copayInput" min="0" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+    </div>
+
+    <!-- Step: sufs (eligibility + scholarship details together) -->
+    <div class="step-panel hidden" data-step="sufs">
+      <h2>Step Up For Students (SUFS)</h2>
+      <div class="field">
+        <label>Is the student eligible for a Step Up For Students scholarship?</label>
+        <div class="radio-group" id="sufsGroup">
+          <div class="radio-btn" data-value="yes">Yes</div>
+          <div class="radio-btn" data-value="no">No</div>
+        </div>
+      </div>
+      <div id="sufsDetailWrap" class="followup hidden">
+        <div class="field">
+          <label>Scholarship type</label>
+          <div class="radio-group" id="sufsTypeGroup">
+            <div class="radio-btn" data-value="ftc">FTC / EO</div>
+            <div class="radio-btn" data-value="ua">UA</div>
+          </div>
+          <div id="ftcUnavailableNote" class="warning hidden">FTC/EO is only available for School-Age students. Preschool students may apply a UA scholarship.</div>
+        </div>
+        <div class="field" id="ftcField">
+          <label for="ftcCounty">County of residence (determines FTC/EO award amount)</label>
+          <select id="ftcCounty">
+          <option value="8320">Alachua County — $8,320</option>
+          <option value="8954">Baker County — $8,954</option>
+          <option value="8407">Bay County — $8,407</option>
+          <option value="9047">Bradford County — $9,047</option>
+          <option value="8375">Brevard County — $8,375</option>
+          <option value="8494">Broward County — $8,494</option>
+          <option value="9293">Calhoun County — $9,293</option>
+          <option value="8807">Charlotte County — $8,807</option>
+          <option value="8299">Citrus County — $8,299</option>
+          <option value="8330">Clay County — $8,330</option>
+          <option value="10176">Collier County — $10,176</option>
+          <option value="8610">Columbia County — $8,610</option>
+          <option value="8745">Dade County — $8,745</option>
+          <option value="8924">De Soto County — $8,924</option>
+          <option value="9031">Dixie County — $9,031</option>
+          <option value="8409">Duval County — $8,409</option>
+          <option value="8402">Escambia County — $8,402</option>
+          <option value="8252">Flagler County — $8,252</option>
+          <option value="10228">Franklin County — $10,228</option>
+          <option value="8872">Gadsden County — $8,872</option>
+          <option value="9267">Gilchrist County — $9,267</option>
+          <option value="9559">Glades County — $9,559</option>
+          <option value="9973">Gulf County — $9,973</option>
+          <option value="9258">Hamilton County — $9,258</option>
+          <option value="8664">Hardee County — $8,664</option>
+          <option value="8348">Hendry County — $8,348</option>
+          <option value="8284">Hernando County — $8,284</option>
+          <option value="8601">Highlands County — $8,601</option>
+          <option value="8429">Hillsborough County — $8,429</option>
+          <option value="9231">Holmes County — $9,231</option>
+          <option value="8727">Indian River County — $8,727</option>
+          <option value="8977">Jackson County — $8,977</option>
+          <option value="10246">Jefferson County — $10,246</option>
+          <option value="9358">Lafayette County — $9,358</option>
+          <option value="8282">Lake County — $8,282</option>
+          <option value="8779">Lee County — $8,779</option>
+          <option value="8373" selected>Leon County — $8,373</option>
+          <option value="9080">Levy County — $9,080</option>
+          <option value="9432">Liberty County — $9,432</option>
+          <option value="8917">Madison County — $8,917</option>
+          <option value="8378">Manatee County — $8,378</option>
+          <option value="8303">Marion County — $8,303</option>
+          <option value="9165">Martin County — $9,165</option>
+          <option value="12217">Monroe County — $12,217</option>
+          <option value="8825">Nassau County — $8,825</option>
+          <option value="8475">Okaloosa County — $8,475</option>
+          <option value="8743">Okeechobee County — $8,743</option>
+          <option value="8420">Orange County — $8,420</option>
+          <option value="8336">Osceola County — $8,336</option>
+          <option value="8890">Palm Beach County — $8,890</option>
+          <option value="8330">Pasco County — $8,330</option>
+          <option value="8643">Pinellas County — $8,643</option>
+          <option value="8336">Polk County — $8,336</option>
+          <option value="8846">Putnam County — $8,846</option>
+          <option value="8310">Santa Rosa County — $8,310</option>
+          <option value="9057">Sarasota County — $9,057</option>
+          <option value="8377">Seminole County — $8,377</option>
+          <option value="8415">St. Johns County — $8,415</option>
+          <option value="8449">St. Lucie County — $8,449</option>
+          <option value="9069">Sumter County — $9,069</option>
+          <option value="8631">Suwannee County — $8,631</option>
+          <option value="8899">Taylor County — $8,899</option>
+          <option value="9117">Union County — $9,117</option>
+          <option value="8238">Volusia County — $8,238</option>
+          <option value="8643">Wakulla County — $8,643</option>
+          <option value="10331">Walton County — $10,331</option>
+          <option value="9258">Washington County — $9,258</option>
+          </select>
+        </div>
+        <div class="field hidden" id="uaField">
+          <label for="uaAmount">UA scholarship award amount</label>
+          <input type="number" id="uaAmount" min="0" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+    </div>
+
+    <!-- Step: addons -->
+    <div class="step-panel hidden" data-step="addons">
+      <h2>Additional Programs</h2>
+      <div class="checkbox-row">
+        <input type="checkbox" id="lunchCheck">
+        <label for="lunchCheck">Lunch Program</label>
+      </div>
+      <div id="afterschoolWrap" class="hidden" style="margin-top:10px;">
+        <div class="checkbox-row">
+          <input type="checkbox" id="afterschoolCheck">
+          <label for="afterschoolCheck">Afterschool Program</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="wizard-nav">
+      <button class="btn btn-ghost hidden" id="backBtn">Back</button>
+      <div class="spacer"></div>
+      <button class="btn btn-primary" id="nextBtn">Next</button>
+    </div>
+  </div>
+
+  <!-- ===================== RESULTS (statement style) ===================== -->
+  <div id="results" class="card">
+    <h2>Your Tuition Statement</h2>
+
+    <div class="freq-toggle" id="freqToggle">
+      <div class="freq-btn active" data-freq="monthly">Monthly</div>
+      <div class="freq-btn" data-freq="bimonthly">Bimonthly</div>
+    </div>
+    <div class="period-note" id="periodNote"></div>
+
+    <table class="line-items" id="lineItemsTable">
+      <thead>
+        <tr><th>Line Item</th><th class="amt">This Payment</th></tr>
+      </thead>
+      <tbody id="lineItemsBody"></tbody>
+    </table>
+
+    <div id="addonsResults"></div>
+
+    <div class="grand-total">
+      <span id="grandTotalLabel">Total Due This Period</span>
+      <span id="grandTotalAmount">$0.00</span>
+    </div>
+    <div class="note" id="grandTotalNote"></div>
+    <div class="note">Hover any line item for a full explanation of how it was calculated.</div>
+
+    <div class="wizard-nav">
+      <button class="btn btn-outline" id="startOverBtn">Start Over</button>
+    </div>
+  </div>
+
+  <div class="footer-disclaimer">
+    This calculator provides an estimate only, based on the information entered. Final tuition and scholarship amounts are determined by the Business Office and applicable state agencies.
+  </div>
+</div>
+
+<!-- ===================== PROGRESS DOCK ===================== -->
+<div class="progress-dock" id="progressDock">
+  <div class="progress-dock-inner">
+    <div class="progress-label" id="progressLabel">Step 1 of 4</div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+</div>
+
+<script>
+// ---------- Constants ----------
+const PRESCHOOL_TUITION = 12082.58;
+const SCHOOLAGE_TUITION = 12736.89;
+const VPK_SCHOLARSHIP = 2872.80;
+const SR_RATES = { 2: 36.67, 3: 27.23, 4: 26.14, 5: 25.17 };
+const FTC_EO_CAP = 10000; // silent cap, not shown to parent
+const LUNCH_MONTHLY = 76.50;
+const AFTERSCHOOL_MONTHLY = 225.00;
+const SEPT_1_2026 = new Date(2026, 8, 1); // month is 0-indexed; 8 = September
+
+// ---------- Helpers ----------
+function fmt(n) {
+  return "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function clampMin0(n) { return Math.max(0, n); }
+
+function ageAsOf(dobDate, refDate) {
+  let age = refDate.getFullYear() - dobDate.getFullYear();
+  const m = refDate.getMonth() - dobDate.getMonth();
+  if (m < 0 || (m === 0 && refDate.getDate() < dobDate.getDate())) age--;
+  return age;
+}
+
+// ---------- Radio group wiring ----------
+function wireRadioGroup(groupId, onChange) {
+  const group = document.getElementById(groupId);
+  const btns = group.querySelectorAll(".radio-btn");
+  btns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      btns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      onChange(btn.dataset.value);
+    });
+  });
+}
+function getRadioValue(groupId) {
+  const active = document.querySelector("#" + groupId + " .radio-btn.active");
+  return active ? active.dataset.value : null;
+}
+
+// ---------- Age / DOB behavior ----------
+const dobInput = document.getElementById("dobInput");
+const computedAgeText = document.getElementById("computedAgeText");
+const dobError = document.getElementById("dobError");
+const vpkWarning = document.getElementById("vpkWarning");
+const afterschoolWrap = document.getElementById("afterschoolWrap");
+const srCopayWrap = document.getElementById("srCopayWrap");
+const sufsDetailWrap = document.getElementById("sufsDetailWrap");
+
+let currentAge = null;
+let currentSchoolAge = null;
+
+function isSchoolAge() { return currentSchoolAge; }
+
+function updateAgeState() {
+  if (!dobInput.value) {
+    currentAge = null;
+    currentSchoolAge = null;
+    computedAgeText.textContent = "";
+    afterschoolWrap.classList.add("hidden");
+    return;
+  }
+  const [y, m, d] = dobInput.value.split("-").map(Number);
+  const dob = new Date(y, m - 1, d);
+  currentAge = ageAsOf(dob, SEPT_1_2026);
+  currentSchoolAge = currentAge >= 5;
+
+  computedAgeText.textContent = "Age as of September 1, 2026: " + currentAge + " (" + (currentSchoolAge ? "School-Age" : "Preschool") + ")";
+
+  if (currentAge !== 4) vpkWarning.classList.add("hidden");
+
+  if (currentSchoolAge) {
+    afterschoolWrap.classList.remove("hidden");
+  } else {
+    afterschoolWrap.classList.add("hidden");
+    document.getElementById("afterschoolCheck").checked = false;
+  }
+
+  updateSufsTypeAvailability();
+}
+dobInput.addEventListener("change", updateAgeState);
+dobInput.addEventListener("input", updateAgeState);
+
+function updateSufsTypeAvailability() {
+  const ftcBtn = document.querySelector('#sufsTypeGroup .radio-btn[data-value="ftc"]');
+  const note = document.getElementById("ftcUnavailableNote");
+  const ftcAllowed = currentAge === null || isSchoolAge();
+
+  ftcBtn.classList.toggle("hidden", !ftcAllowed);
+  note.classList.toggle("hidden", ftcAllowed);
+
+  if (!ftcAllowed && getRadioValue("sufsTypeGroup") === "ftc") {
+    document.querySelectorAll('#sufsTypeGroup .radio-btn').forEach(b => b.classList.remove("active"));
+    document.querySelector('#sufsTypeGroup .radio-btn[data-value="ua"]').classList.add("active");
+    updateSufsTypeVisibility();
+  }
+}
+
+wireRadioGroup("vpkGroup", () => {});
+
+wireRadioGroup("srGroup", (val) => {
+  const show = val === "yes" && !isSchoolAge();
+  srCopayWrap.classList.toggle("hidden", !show);
+});
+
+wireRadioGroup("sufsGroup", (val) => {
+  sufsDetailWrap.classList.toggle("hidden", val !== "yes");
+});
+
+wireRadioGroup("sufsTypeGroup", updateSufsTypeVisibility);
+
+function updateSufsTypeVisibility() {
+  const val = getRadioValue("sufsTypeGroup");
+  document.getElementById("ftcField").classList.toggle("hidden", val !== "ftc");
+  document.getElementById("uaField").classList.toggle("hidden", val !== "ua");
+}
+
+// default active states
+document.querySelector('#vpkGroup .radio-btn[data-value="no"]').classList.add("active");
+document.querySelector('#srGroup .radio-btn[data-value="no"]').classList.add("active");
+document.querySelector('#sufsGroup .radio-btn[data-value="no"]').classList.add("active");
+document.querySelector('#sufsTypeGroup .radio-btn[data-value="ftc"]').classList.add("active");
+updateSufsTypeVisibility();
+
+// ---------- Wizard step engine ----------
+const STEP_ORDER = ["dob", "vpk", "sr", "sufs", "addons"];
+let currentStepIndex = 0;
+
+function stepApplicable(id) {
+  switch (id) {
+    case "dob": return true;
+    case "vpk": return currentAge === 4;
+    case "sr": return true;
+    case "sufs": return true;
+    case "addons": return true;
+    default: return true;
+  }
+}
+function getActiveSteps() {
+  return STEP_ORDER.filter(stepApplicable);
+}
+
+function renderStep() {
+  const active = getActiveSteps();
+  if (currentStepIndex >= active.length) currentStepIndex = active.length - 1;
+  if (currentStepIndex < 0) currentStepIndex = 0;
+  const stepId = active[currentStepIndex];
+
+  document.querySelectorAll(".step-panel").forEach(panel => {
+    panel.classList.toggle("hidden", panel.dataset.step !== stepId);
+  });
+
+  document.getElementById("backBtn").classList.toggle("hidden", currentStepIndex === 0);
+  const isLast = currentStepIndex === active.length - 1;
+  document.getElementById("nextBtn").textContent = isLast ? "Calculate Estimate" : "Next";
+
+  updateProgress(active.length, currentStepIndex + 1);
+}
+
+function updateProgress(total, current) {
+  document.getElementById("progressLabel").textContent = "Step " + current + " of " + total;
+  document.getElementById("progressFill").style.width = ((current / total) * 100) + "%";
+}
+
+function validateStep(stepId) {
+  dobError.textContent = "";
+  if (stepId === "dob") {
+    if (!dobInput.value) {
+      dobError.textContent = "Please enter a date of birth to continue.";
+      return false;
+    }
+  }
+  return true;
+}
+
+document.getElementById("nextBtn").addEventListener("click", () => {
+  const active = getActiveSteps();
+  const stepId = active[currentStepIndex];
+  if (!validateStep(stepId)) return;
+
+  const isLast = currentStepIndex === active.length - 1;
+  if (isLast) {
+    calculate();
+    return;
+  }
+  currentStepIndex++;
+  renderStep();
+});
+
+document.getElementById("backBtn").addEventListener("click", () => {
+  currentStepIndex = Math.max(0, currentStepIndex - 1);
+  renderStep();
+});
+
+document.getElementById("startOverBtn").addEventListener("click", () => {
+  location.reload();
+});
+
+renderStep();
+
+// ---------- Frequency toggle (statement view) ----------
+let activeFreq = "monthly";
+document.querySelectorAll("#freqToggle .freq-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#freqToggle .freq-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    activeFreq = btn.dataset.freq;
+    renderStatement(lastCalc);
+  });
+});
+
+// ---------- Calculation ----------
+let lastCalc = null;
+
+function calculate() {
+  if (!dobInput.value) {
+    dobError.textContent = "Please enter a date of birth to continue.";
+    return;
+  }
+  const schoolAge = isSchoolAge();
+  const age = currentAge;
+  const fullTuition = schoolAge ? SCHOOLAGE_TUITION : PRESCHOOL_TUITION;
+
+  const lineItems = [];
+  let remaining = fullTuition;
+
+  lineItems.push({
+    label: "Full Tuition (" + (schoolAge ? "School-Age" : "Preschool") + ")",
+    amount: fullTuition,
+    type: "base",
+    narrate: (divisor, freqWord) =>
+      "This is the full annual tuition for a " + (schoolAge ? "School-Age" : "Preschool") + " student (age " + age + " as of September 1, 2026): " + fmt(fullTuition) + " per year. That amount is divided evenly across " + divisor + " " + freqWord + " payments to arrive at the amount due each period."
+  });
+
+  // VPK
+  let vpkHasCert = false;
+  if (age === 4) {
+    const vpkVal = getRadioValue("vpkGroup");
+    vpkHasCert = vpkVal === "yes";
+    if (vpkHasCert) {
+      remaining = clampMin0(remaining - VPK_SCHOLARSHIP);
+      lineItems.push({
+        label: "VPK Scholarship",
+        amount: -VPK_SCHOLARSHIP,
+        type: "subtract",
+        narrate: (divisor, freqWord) =>
+          "Students who are 4 years old on September 1 and have an uploaded VPK certificate receive Florida's VPK scholarship of " + fmt(VPK_SCHOLARSHIP) + " for the year. That annual scholarship is divided across " + divisor + " " + freqWord + " payments and subtracted from tuition each period."
+      });
+      vpkWarning.classList.add("hidden");
+    } else {
+      vpkWarning.classList.remove("hidden");
+    }
+  }
+
+  // School Readiness
+  const srEligible = getRadioValue("srGroup") === "yes";
+  let schoolAgeAfterschoolFullyCovered = false;
+
+  if (srEligible && !schoolAge) {
+    const dailyRate = SR_RATES[age];
+    const copay = parseFloat(document.getElementById("copayInput").value) || 0;
+
+    let srMonthlyGross = dailyRate * 17;
+    const stacked = age === 4 && vpkHasCert;
+    if (stacked) srMonthlyGross = srMonthlyGross * (8 / 11);
+    const srAnnualGross = srMonthlyGross * 12;
+    remaining = clampMin0(remaining - srAnnualGross);
+
+    lineItems.push({
+      label: "School Readiness Scholarship",
+      amount: -srAnnualGross,
+      type: "subtract",
+      narrate: (divisor, freqWord) => {
+        let s = "Calculated using the DCF daily rate for a " + age + "-year-old (" + fmt(dailyRate) + " per day), multiplied by 17 and by 12 months, for an annual subsidy of " + fmt(dailyRate * 17 * 12) + ".";
+        if (stacked) {
+          s += " Because the student is also enrolled in VPK, only 8/11 of that subsidy applies to the hours VPK does not cover, bringing the annual scholarship to " + fmt(srAnnualGross) + ".";
+        }
+        s += " That annual amount is divided across " + divisor + " " + freqWord + " payments and subtracted from tuition each period.";
+        return s;
+      }
+    });
+
+    if (copay > 0) {
+      const copayAnnual = copay * 17 * 12;
+      remaining = remaining + copayAnnual;
+      lineItems.push({
+        label: "Parent Co-Payment (School Readiness)",
+        amount: copayAnnual,
+        type: "add",
+        narrate: (divisor, freqWord) =>
+          "Per the Parent Payment Certificate, the family's daily co-pay of " + fmt(copay) + " is multiplied by 17 and by 12 months, for an annual out-of-pocket amount of " + fmt(copayAnnual) + ". That amount is divided across " + divisor + " " + freqWord + " payments and added to the balance each period, since the School Readiness scholarship above is shown at its full, gross value."
+      });
+    }
+  } else if (srEligible && schoolAge) {
+    schoolAgeAfterschoolFullyCovered = true;
+  }
+
+  // SUFS
+  const sufsEligible = getRadioValue("sufsGroup") === "yes";
+  if (sufsEligible) {
+    // FTC/EO is only available for School-Age students; Preschool students may only use UA.
+    const sufsType = schoolAge ? getRadioValue("sufsTypeGroup") : "ua";
+    let applied = 0;
+    let label = "";
+    let narrate;
+    if (sufsType === "ftc") {
+      const countySelect = document.getElementById("ftcCounty");
+      const countyName = countySelect.options[countySelect.selectedIndex].text.replace(/ County.*/, "");
+      let ftcVal = parseFloat(countySelect.value) || 0;
+      ftcVal = Math.min(Math.max(ftcVal, 0), FTC_EO_CAP);
+      applied = Math.min(ftcVal, remaining);
+      label = "Step Up For Students (FTC/EO)";
+      narrate = (divisor, freqWord) =>
+        "Based on " + countyName + " County's Grades K-3 FTC/EO award amount, the scholarship totals " + fmt(ftcVal) + " for the year and is applied directly to whatever annual balance remains after tuition and other scholarships. That amount is divided across " + divisor + " " + freqWord + " payments and subtracted from the balance each period.";
+    } else {
+      let uaVal = parseFloat(document.getElementById("uaAmount").value) || 0;
+      uaVal = Math.min(Math.max(uaVal, 0), fullTuition);
+      applied = Math.min(uaVal, remaining);
+      label = "Step Up For Students (UA)";
+      narrate = (divisor, freqWord) =>
+        "The Step Up For Students UA scholarship award of " + fmt(applied) + " is applied directly to whatever annual balance remains after tuition and other scholarships. That amount is divided across " + divisor + " " + freqWord + " payments and subtracted from the balance each period.";
+    }
+    remaining = clampMin0(remaining - applied);
+    lineItems.push({ label: label, amount: -applied, type: "subtract", narrate: narrate });
+  }
+
+  remaining = clampMin0(remaining);
+  lineItems.push({
+    label: "Remaining Balance",
+    amount: remaining,
+    type: "total",
+    narrate: (divisor, freqWord) =>
+      "Full annual tuition minus all applicable scholarships (plus any required co-payment) leaves a remaining balance of " + fmt(remaining) + " for the year — never less than $0. That balance is divided across " + divisor + " " + freqWord + " payments to arrive at the amount due each period."
+  });
+
+  lastCalc = {
+    schoolAge,
+    lineItemsAnnual: lineItems,
+    remainingAnnual: remaining,
+    lunchSelected: document.getElementById("lunchCheck").checked,
+    afterschoolSelected: schoolAge && document.getElementById("afterschoolCheck").checked,
+    schoolAgeAfterschoolFullyCovered
+  };
+
+  renderStatement(lastCalc);
+
+  document.getElementById("wizardCard").classList.add("hidden");
+  document.getElementById("results").style.display = "block";
+  document.getElementById("progressLabel").textContent = "Estimate Complete";
+  document.getElementById("progressFill").style.width = "100%";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ---------- Statement rendering (re-runs whenever the frequency toggle changes) ----------
+function getDivisor(schoolAge, freq) {
+  if (schoolAge) return freq === "monthly" ? 10 : 20;
+  return freq === "monthly" ? 12 : 24;
+}
+
+function renderStatement(calc) {
+  if (!calc) return;
+  const divisor = getDivisor(calc.schoolAge, activeFreq);
+  const freqWord = activeFreq === "monthly" ? "monthly" : "bimonthly";
+
+  document.getElementById("periodNote").textContent = divisor + " " + (activeFreq === "monthly" ? "monthly" : "bimonthly") + " payments per year";
+
+  // ---- Line items table ----
+  const body = document.getElementById("lineItemsBody");
+  body.innerHTML = "";
+  calc.lineItemsAnnual.forEach(item => {
+    const tr = document.createElement("tr");
+    if (item.type === "subtract") tr.classList.add("subtract");
+    if (item.type === "add") tr.classList.add("add");
+    if (item.type === "total") tr.classList.add("total");
+
+    const tdLabel = document.createElement("td");
+    const span = document.createElement("span");
+    span.className = "tt";
+    span.setAttribute("data-tooltip", item.narrate ? item.narrate(divisor, freqWord) : "");
+    span.textContent = item.label;
+    tdLabel.appendChild(span);
+
+    let sign = "";
+    if (item.type === "subtract") sign = "-";
+    if (item.type === "add") sign = "+";
+    const perPeriod = Math.abs(item.amount) / divisor;
+
+    const tdAmt = document.createElement("td");
+    tdAmt.className = "amt";
+    tdAmt.textContent = sign + fmt(perPeriod);
+
+    tr.appendChild(tdLabel);
+    tr.appendChild(tdAmt);
+    body.appendChild(tr);
+  });
+
+  const tuitionPayment = calc.remainingAnnual / divisor;
+
+  // ---- Add-ons ----
+  const wrap = document.getElementById("addonsResults");
+  wrap.innerHTML = "";
+  let addonTotal = 0;
+
+  if (calc.lunchSelected) {
+    const line = document.createElement("div");
+    line.className = "addon-line";
+    const labelSpan = document.createElement("span");
+    labelSpan.className = "tt";
+    labelSpan.setAttribute("data-tooltip", "Lunch costs $4.50 per school day. It is billed as a flat " + fmt(LUNCH_MONTHLY) + " monthly charge and cannot be split into bimonthly payments — it will always appear as a separate monthly line, regardless of which payment frequency is selected above.");
+    labelSpan.textContent = "Lunch Program" + (activeFreq === "bimonthly" ? " (billed monthly only)" : "");
+    const amtSpan = document.createElement("span");
+    amtSpan.className = "amt";
+    amtSpan.textContent = fmt(LUNCH_MONTHLY);
+    line.appendChild(labelSpan);
+    line.appendChild(amtSpan);
+    wrap.appendChild(line);
+    if (activeFreq === "monthly") addonTotal += LUNCH_MONTHLY;
+  }
+
+  if (calc.afterschoolSelected) {
+    const afterschoolDivisor = activeFreq === "monthly" ? 1 : 2;
+    const perPeriod = AFTERSCHOOL_MONTHLY / afterschoolDivisor;
+
+    const chargeLine = document.createElement("div");
+    chargeLine.className = "addon-line";
+    const chargeLabelSpan = document.createElement("span");
+    chargeLabelSpan.className = "tt";
+    chargeLabelSpan.setAttribute("data-tooltip", "The Afterschool Program costs a flat " + fmt(AFTERSCHOOL_MONTHLY) + " per month." + (afterschoolDivisor > 1 ? " Split evenly into " + afterschoolDivisor + " bimonthly payments of " + fmt(perPeriod) + " each." : ""));
+    chargeLabelSpan.textContent = "Afterschool Program Charge";
+    const chargeAmtSpan = document.createElement("span");
+    chargeAmtSpan.className = "amt";
+    chargeAmtSpan.textContent = fmt(perPeriod);
+    chargeLine.appendChild(chargeLabelSpan);
+    chargeLine.appendChild(chargeAmtSpan);
+    wrap.appendChild(chargeLine);
+    addonTotal += perPeriod;
+
+    if (calc.schoolAgeAfterschoolFullyCovered) {
+      const creditLine = document.createElement("div");
+      creditLine.className = "addon-line credit";
+      const creditLabelSpan = document.createElement("span");
+      creditLabelSpan.className = "tt";
+      creditLabelSpan.setAttribute("data-tooltip", "School-age students who are eligible for School Readiness receive a credit for the full cost of the Afterschool Program each period, so this charge is fully offset.");
+      creditLabelSpan.textContent = "School Readiness Afterschool Credit";
+      const creditAmtSpan = document.createElement("span");
+      creditAmtSpan.className = "amt";
+      creditAmtSpan.textContent = "-" + fmt(perPeriod);
+      creditLine.appendChild(creditLabelSpan);
+      creditLine.appendChild(creditAmtSpan);
+      wrap.appendChild(creditLine);
+      addonTotal -= perPeriod;
+    }
+  }
+
+  // ---- Grand total ----
+  const grandTotal = tuitionPayment + addonTotal;
+  document.getElementById("grandTotalLabel").textContent = "Total Due This " + (activeFreq === "monthly" ? "Month" : "Payment Period");
+  document.getElementById("grandTotalAmount").textContent = fmt(grandTotal);
+
+  let noteText = "Tuition payment (" + fmt(tuitionPayment) + ") + selected add-ons for this billing period.";
+  if (calc.lunchSelected && activeFreq === "bimonthly") {
+    noteText += " Lunch is billed monthly only (" + fmt(LUNCH_MONTHLY) + "/mo) and will appear as a separate monthly charge.";
+  }
+  document.getElementById("grandTotalNote").textContent = noteText;
+}
+</script>
+</body>
+</html>
