@@ -771,8 +771,7 @@ function updateSufsTypeAvailability() {
 wireRadioGroup("vpkGroup", () => {});
 
 wireRadioGroup("srGroup", (val) => {
-  const show = val === "yes" && !isSchoolAge();
-  srCopayWrap.classList.toggle("hidden", !show);
+  srCopayWrap.classList.toggle("hidden", val !== "yes");
 });
 
 wireRadioGroup("sufsGroup", (val) => {
@@ -930,7 +929,6 @@ function calculate() {
 
   if (srEligible && !schoolAge) {
     const dailyRate = SR_RATES[age];
-    const copay = parseFloat(document.getElementById("copayInput").value) || 0;
 
     let srMonthlyGross = dailyRate * 17;
     const stacked = age === 4 && vpkHasCert;
@@ -951,7 +949,14 @@ function calculate() {
         return s;
       }
     });
+  } else if (srEligible && schoolAge) {
+    schoolAgeAfterschoolFullyCovered = true;
+  }
 
+  // School Readiness co-pay applies to any SR-eligible student, Preschool or School-Age —
+  // the family still owes this even when School-Age SR instead covers Afterschool in full.
+  if (srEligible) {
+    const copay = parseFloat(document.getElementById("copayInput").value) || 0;
     if (copay > 0) {
       const copayAnnual = copay * 17 * 12;
       remaining = remaining + copayAnnual;
@@ -959,12 +964,17 @@ function calculate() {
         label: "Parent Co-Payment (School Readiness)",
         amount: copayAnnual,
         type: "add",
-        narrate: (divisor, freqWord) =>
-          "Per the Parent Payment Certificate, the family's daily co-pay of " + fmt(copay) + " is multiplied by 17 (the average school days per month during the school year) and by 12 months, for an annual out-of-pocket amount of " + fmt(copayAnnual) + ". That amount is divided across " + divisor + " " + freqWord + " payments and added to the balance each period, since the School Readiness scholarship above is shown at its full, gross value."
+        narrate: (divisor, freqWord) => {
+          let s = "Per the Parent Payment Certificate, the family's daily co-pay of " + fmt(copay) + " is multiplied by 17 (the average school days per month during the school year) and by 12 months, for an annual out-of-pocket amount of " + fmt(copayAnnual) + ".";
+          if (!schoolAge) {
+            s += " That amount is divided across " + divisor + " " + freqWord + " payments and added to the balance each period, since the School Readiness scholarship above is shown at its full, gross value.";
+          } else {
+            s += " Even though School Readiness eligibility covers the Afterschool Program cost in full, the family's co-pay is still owed. That amount is divided across " + divisor + " " + freqWord + " payments and added to the balance each period.";
+          }
+          return s;
+        }
       });
     }
-  } else if (srEligible && schoolAge) {
-    schoolAgeAfterschoolFullyCovered = true;
   }
 
   // SUFS
@@ -1159,7 +1169,7 @@ function buildPrintStatement(calc) {
   const srEligiblePrint = getRadioValue("srGroup") === "yes";
   const srDisplay = srEligiblePrint ? "Yes" : "No";
   const copayVal = parseFloat(document.getElementById("copayInput").value) || 0;
-  const copayDisplay = (srEligiblePrint && !calc.schoolAge) ? (fmt(copayVal) + " per day") : "Not applicable";
+  const copayDisplay = srEligiblePrint ? (fmt(copayVal) + " per day") : "Not applicable";
 
   const sufsEligiblePrint = getRadioValue("sufsGroup") === "yes";
   const sufsDisplay = sufsEligiblePrint ? "Yes" : "No";
