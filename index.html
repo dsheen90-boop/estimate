@@ -775,7 +775,18 @@ wireRadioGroup("srGroup", (val) => {
 });
 
 wireRadioGroup("sufsGroup", (val) => {
-  sufsDetailWrap.classList.toggle("hidden", val !== "yes");
+  const show = val === "yes";
+  sufsDetailWrap.classList.toggle("hidden", !show);
+
+  if (show) {
+    // Default the scholarship type by student category: School-Age -> FTC/EO, Preschool -> UA
+    // (Preschool students are not eligible for FTC/EO).
+    const defaultType = isSchoolAge() ? "ftc" : "ua";
+    document.querySelectorAll('#sufsTypeGroup .radio-btn').forEach(b => b.classList.remove("active"));
+    document.querySelector('#sufsTypeGroup .radio-btn[data-value="' + defaultType + '"]').classList.add("active");
+    updateSufsTypeVisibility();
+    updateSufsTypeAvailability();
+  }
 });
 
 wireRadioGroup("sufsTypeGroup", updateSufsTypeVisibility);
